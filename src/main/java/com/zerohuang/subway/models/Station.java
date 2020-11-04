@@ -1,5 +1,7 @@
 package com.zerohuang.subway.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,16 +11,17 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Station {
     /**
      * 站点id
      */
-    private Long sid;
+    private Long id;
 
     /**
      * 站点名字
      */
-    private String sname;
+    private String name;
 
 
     /**
@@ -42,10 +45,5 @@ public class Station {
      * 可换乘线路
      */
     private MyArrayList<Integer> transferLines = new MyArrayList<>();
-
-    /**
-     * 相邻站点
-     */
-    private MyArrayList<Integer> edges;
 
 }

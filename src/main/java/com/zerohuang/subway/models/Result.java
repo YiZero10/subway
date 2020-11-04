@@ -15,5 +15,8 @@ public class Result {
 
     private int distance;
 
+    @JsonIgnore
+    private int transferCount;
+
     private MyArrayList<Station> passStations = new MyArrayList<>();
 }

@@ -70,7 +70,6 @@ public class MyHashMap<K, V> {
         }
         //根据key和哈希算法算出数组下标
         int index = getKey(k.hashCode());
-        System.out.println(v);
         Entry<K, V> entry = table[index];
         //判断entry是否为空
         if (entry == null) {
@@ -191,6 +190,13 @@ public class MyHashMap<K, V> {
         return size == 0;
     }
 
+    public boolean clear(){
+        Entry[] tab = table;
+        for (int i = 0; i < tab.length; i++)
+            tab[i] = null;
+        size = 0;
+        return true;
+    }
 
     @Data
     class Entry<K, V> {

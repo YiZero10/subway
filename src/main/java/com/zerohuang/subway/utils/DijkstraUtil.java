@@ -27,6 +27,8 @@ public class DijkstraUtil {
      */
     private static MyArrayList<Station> analysisList = new MyArrayList<>();
 
+    private MyArrayList<Line> lines = new MyArrayList<>();
+
     public Result calculate(Station startStation, Station endStation) {
         if (!analysisList.contains(startStation)) {
             analysisList.add(startStation);
@@ -46,6 +48,7 @@ public class DijkstraUtil {
                 result.setStart(startStation);
                 result.setEnd(station);
                 result.getPassStations().add(station);
+                result.setDistance(DEFAULT_DISTANCE);
                 resultMap.put(station, result);
             }
         }
@@ -66,7 +69,7 @@ public class DijkstraUtil {
             }
 
             int distance = DEFAULT_DISTANCE;
-            if (parent.getSname().equals(child.getSname())) {
+            if (parent.getName().equals(child.getName())) {
                 distance = 0;
             }
 
@@ -97,7 +100,8 @@ public class DijkstraUtil {
         return resultMap.get(endStation);
     }
 
-    public Result calResult(Station start, Station end){
+    public Result calResult(Station start, Station end, MyArrayList<Line> lines){
+        this.lines = lines;
         calculate(start, end);
         analysisList.clear();
         MyArrayList<Station> list = resultMap.get(end).getPassStations();
@@ -105,14 +109,16 @@ public class DijkstraUtil {
         for ( Station station : list) {
             if (station != null){
                 pass.add(station);
-                if (station.getSname().equals(end.getSname()))
+                if (station.getName().equals(end.getName()))
                     break;
             }
         }
         list.clear();
         resultMap.get(end).getPassStations().clear();
         resultMap.get(end).setPassStations(pass);
-        return resultMap.get(end);
+        Result result = resultMap.get(end);
+        resultMap.clear();
+        return result;
     }
 
     /**
@@ -139,7 +145,7 @@ public class DijkstraUtil {
 
     public MyArrayList<Station> getLinkStations(Station station) {
         MyArrayList<Station> linkedStations = new MyArrayList<>();
-        for (Line line : DataBuild.LINES) {
+        for (Line line : lines) {
             MyArrayList<Station> stations = line.getStations();
             for (int i = 0; i < stations.size(); i++) {
                 if (station.equals(stations.get(i))) {
@@ -162,9 +168,12 @@ public class DijkstraUtil {
 
     private void getTransfer(MyArrayList<Station> linkedStations, Station s) {
         for (int id : s.getTransferLines()) {
-            MyArrayList<Station> stations = DataBuild.LINES.get(id).getStations();
+            if (lines.size() < id){
+                continue;
+            }
+            MyArrayList<Station> stations = lines.get(id).getStations();
             for (int i = 0; i < stations.size(); i++) {
-                if (s.getSname().equals(stations.get(i).getSname())) {
+                if (s.getName().equals(stations.get(i).getName())) {
                     if (i == 0) {
                         linkedStations.add(stations.get(i + 1));
                     } else if (i == (stations.size() - 1)) {

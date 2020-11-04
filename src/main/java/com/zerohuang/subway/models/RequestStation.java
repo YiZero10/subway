@@ -1,6 +1,7 @@
 package com.zerohuang.subway.models;
 
 import lombok.Data;
+import lombok.NonNull;
 
 /**
  * @author ZeroHuang
@@ -8,7 +9,9 @@ import lombok.Data;
  */
 @Data
 public class RequestStation {
-    private Station startStation;
+    @NonNull
+    private SimpleStation startStation;
 
-    private Station endStation;
+    @NonNull
+    private SimpleStation endStation;
 }

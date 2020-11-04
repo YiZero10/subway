@@ -1,9 +1,7 @@
 package com.zerohuang.subway.controller;
 
-import com.zerohuang.subway.models.Line;
-import com.zerohuang.subway.models.MyArrayList;
-import com.zerohuang.subway.models.RequestStation;
-import com.zerohuang.subway.models.Result;
+import com.zerohuang.subway.models.*;
+import com.zerohuang.subway.utils.DFSUtil;
 import com.zerohuang.subway.utils.DataBuild;
 import com.zerohuang.subway.utils.DijkstraUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +23,9 @@ public class SubwayController {
     @Autowired
     private DijkstraUtil dijkstraUtil;
 
+    @Autowired
+    private DFSUtil dfsUtil;
+
     @RequestMapping("/get")
     private MyArrayList<Line> getLineResult(){
         return DataBuild.LINES;
@@ -32,9 +33,16 @@ public class SubwayController {
 
     @RequestMapping("/cal")
     public Result getCalculateResult(@RequestBody RequestStation station){
-        return dijkstraUtil.calResult(station.getStartStation(), station.getEndStation());
+        return dijkstraUtil.calResult(DataBuild.getStation(station.getStartStation()), DataBuild.getStation(station.getEndStation()), DataBuild.LINES);
     }
 
+    @RequestMapping("/dfs")
+    public Result getDFSResult(@RequestBody RequestStation station){
+        Station start = DataBuild.getStation(station.getStartStation());
+        Station end = DataBuild.getStation(station.getEndStation());
+
+        return dfsUtil.getDFS(start, end);
+    }
    @PostConstruct
     private void dataBuild(){
        DataBuild.init();

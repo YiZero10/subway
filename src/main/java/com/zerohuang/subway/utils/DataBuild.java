@@ -4,10 +4,10 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.zerohuang.subway.models.Line;
 import com.zerohuang.subway.models.MyArrayList;
+import com.zerohuang.subway.models.SimpleStation;
 import com.zerohuang.subway.models.Station;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -29,12 +29,14 @@ public class DataBuild {
                 Line line = new Line();
                 JSONObject jsonLine = new JSONObject((Map<String, Object>) o);
                 JSONArray jsonStations = jsonLine.getJSONArray("st");
-                if (jsonLine.get("ln").equals("S9号线(宁高线)")){
+                String ln = jsonLine.getString("ln");
+                if (ln.equals("S9号线(宁高线)") || ln.equals("S1号线(机场线)") || ln.equals("S7号线(宁溧线)")){
                     continue;
                 }
-                line.setLid(index++);
-                line.setLname(jsonLine.getString("ln"));
+                line.setId(index++);
+                line.setName(ln);
                 setStation(line, jsonStations);
+                line.getStations().trimToSize();
                 LINES.add(line);
             }
         }
@@ -44,27 +46,22 @@ public class DataBuild {
         MyArrayList<Long> stationList = new MyArrayList<>();
         MyArrayList<Station> stations = new MyArrayList<>();
 
-        HashMap<Long, String> stationMap = new HashMap<>();
-
         for (Object o:array) {
             Station station = new Station();
             JSONObject jsonStation = new JSONObject((Map<String, Object>) o);
             Long stationId = Long.parseLong(jsonStation.getString("sid"));
             String stationName = jsonStation.getString("n");
-
-            station.setSid(stationId);
-            station.setSname(stationName);
+            station.setId(stationId);
+            station.setName(stationName);
             station.setSPin(jsonStation.getString("sp"));
-            station.setLId(line.getLid());
-            station.setLine(line.getLname());
+            station.setLId(line.getId());
+            station.setLine(line.getName());
             station.setIsTransferStation(TransferStation.isContain(stationId));
             checkIsTransfer(station);
             stations.add(station);
             stationList.add(stationId);
-            stationMap.put(stationId,stationName);
         }
         line.setStations(stations);
-        line.setStationMap(stationMap);
         line.setStationList(stationList);
     }
 
@@ -76,15 +73,15 @@ public class DataBuild {
     public static boolean checkIsTransfer(Station station){
         for (int i = 0; i < LINES.size(); i++) {
             Line item = LINES.get(i);
-            if (item.getLname().equals(station.getLine())){
+            if (item.getName().equals(station.getLine())){
                 continue;
             }
             MyArrayList<Long> stationIds = item.getStationList();
 
-            if (stationIds.contains(station.getSid()) && !station.getTransferLines().contains(item.getLid())){
-                station.getTransferLines().add(item.getLid());
+            if (stationIds.contains(station.getId()) && !station.getTransferLines().contains(item.getId())){
+                station.getTransferLines().add(item.getId());
                 for (Station s:item.getStations()) {
-                    if (s.getSid().equals(station.getSid()) && !s.getTransferLines().contains(station.getLId())){
+                    if (s.getId().equals(station.getId()) && !s.getTransferLines().contains(station.getLId())){
                         s.getTransferLines().add(station.getLId());
                         break;
                     }
@@ -94,5 +91,12 @@ public class DataBuild {
         return true;
     }
 
-
+    public static Station getStation(SimpleStation simpleStation){
+        for (Station s : LINES.get(simpleStation.getLid()).getStations()) {
+            if (s.getId().equals(simpleStation.getSid())){
+                return s;
+            }
+        }
+        return null;
+    }
 }

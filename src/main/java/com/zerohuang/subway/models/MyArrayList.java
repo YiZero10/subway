@@ -1,5 +1,6 @@
 package com.zerohuang.subway.models;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import java.util.*;
@@ -9,10 +10,13 @@ import java.util.*;
  * @date 2020/10/26 11:05 上午
  */
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class MyArrayList<T> implements Iterable<T>{
     private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
 
     private static final Object[] DEFAULTCAPACITY_EMPTY_ELEMENTDATA = {};
+
+    private static final Object[] EMPTY_ELEMENTDATA = {};
 
     private static final int DEFAULT_CAPACITY = 10;
 
@@ -267,6 +271,13 @@ public class MyArrayList<T> implements Iterable<T>{
         }
         size = 0;
         capacity = 10;
+    }
+
+    public void trimToSize() {
+        modCount++;
+        if (size < arrayList.length) {
+            arrayList = (size == 0) ? (T[]) EMPTY_ELEMENTDATA : Arrays.copyOf(arrayList, size);
+        }
     }
 
     @Override
