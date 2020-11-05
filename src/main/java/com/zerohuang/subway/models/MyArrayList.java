@@ -25,7 +25,7 @@ public class MyArrayList<T> implements Iterable<T>{
     /**
      * 数组
      */
-    private T[] arrayList;
+    private Object[] arrayList;
 
     /**
      * 实际的数组大小
@@ -38,7 +38,7 @@ public class MyArrayList<T> implements Iterable<T>{
     private int capacity = DEFAULT_CAPACITY;
 
     public MyArrayList() {
-        arrayList = (T[]) new Object[capacity];
+        arrayList = new Object[capacity];
     }
 
     public MyArrayList(int capacity){
@@ -46,7 +46,7 @@ public class MyArrayList<T> implements Iterable<T>{
             throw new RuntimeException("必须大于0");
         }
         this.capacity = capacity;
-        arrayList = (T[]) new Object[capacity];
+        arrayList = new Object[capacity];
     }
 
     public int size() {
@@ -62,7 +62,7 @@ public class MyArrayList<T> implements Iterable<T>{
      */
     public void extendsArrayList() {
         if(size >= capacity) {
-            T[] newArrayList = (T[]) new Object[size * 2 + 1];
+            Object[] newArrayList = new Object[size * 2 + 1];
             this.capacity = size * 2 + 1;
             for(int i=0; i<size; i++) {
                 newArrayList[i] = arrayList[i];
@@ -242,7 +242,7 @@ public class MyArrayList<T> implements Iterable<T>{
      * 返回数组
      * @return
      */
-    public T[] toArray() {
+    public Object[] toArray() {
         return arrayList;
     }
 
@@ -253,7 +253,7 @@ public class MyArrayList<T> implements Iterable<T>{
      */
     public boolean contains(T obj) {
         for(int i=0; i<size; i++) {
-            if(arrayList[i].equals(obj)) {
+            if(obj.equals(arrayList[i])) {
                 return true;
             }
         }
@@ -276,7 +276,7 @@ public class MyArrayList<T> implements Iterable<T>{
     public void trimToSize() {
         modCount++;
         if (size < arrayList.length) {
-            arrayList = (size == 0) ? (T[]) EMPTY_ELEMENTDATA : Arrays.copyOf(arrayList, size);
+            arrayList = (size == 0) ? EMPTY_ELEMENTDATA : Arrays.copyOf(arrayList, size);
         }
     }
 

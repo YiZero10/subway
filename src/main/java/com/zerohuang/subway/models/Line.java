@@ -13,12 +13,25 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
+//路线
 public class Line {
+    /**
+     * 路径id
+     */
     private int id;
 
+    /**
+     * 路径名字
+     */
     private String name;
 
+    /**
+     * 路径上所有站点信息
+     */
     private MyArrayList<Station> stations;
 
+    /**
+     * 路径上所有站点的id集合
+     */
     private MyArrayList<Long> stationList;
 }

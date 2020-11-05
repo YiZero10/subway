@@ -199,6 +199,7 @@ public class MyHashMap<K, V> {
     }
 
     @Data
+    //hash表元素结构
     class Entry<K, V> {
         private K key;
 

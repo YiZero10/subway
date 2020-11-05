@@ -29,6 +29,9 @@ public class Station {
      */
     private String sPin;
 
+    /**
+     * 所属线路的id
+     */
     private int lId;
 
     /**

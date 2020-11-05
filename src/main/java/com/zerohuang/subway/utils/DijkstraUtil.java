@@ -29,11 +29,17 @@ public class DijkstraUtil {
 
     private MyArrayList<Line> lines = new MyArrayList<>();
 
+    /**
+     * Dijkstra算法
+     * @param startStation
+     * @param endStation
+     * @return
+     */
     public Result calculate(Station startStation, Station endStation) {
         if (!analysisList.contains(startStation)) {
-            analysisList.add(startStation);
+            analysisList.add(startStation);                                  //将起始站点标记成已分析
         }
-        if (startStation.equals(endStation)) {
+        if (startStation.equals(endStation)) {                              //判断是否已经找到终点，找到了将结果加入到结果集中
             Result result = new Result();
             result.setDistance(DEFAULT_DISTANCE);
             result.setEnd(startStation);
@@ -41,7 +47,7 @@ public class DijkstraUtil {
             resultMap.put(startStation, result);
             return resultMap.get(startStation);
         }
-        if (resultMap.isEmpty()) {
+        if (resultMap.isEmpty()) {                                          // 初始化结果集，将起始站点的邻接点都加入到集合中
             MyArrayList<Station> linkStations = getLinkStations(startStation);
             for (Station station : linkStations) {
                 Result result = new Result();
@@ -52,8 +58,8 @@ public class DijkstraUtil {
                 resultMap.put(station, result);
             }
         }
-        Station parent = getNextStation();
-        if (parent == null) {
+        Station parent = getNextStation();                                 //获取下一个要分析的站点
+        if (parent == null) {                                              //没有下一个分析的点 加入到结果集 并返回
             Result result = new Result();
             result.setStart(startStation);
             result.setEnd(endStation);
@@ -62,7 +68,7 @@ public class DijkstraUtil {
         if (parent.equals(endStation)) {
             return resultMap.get(parent);
         }
-        MyArrayList<Station> childLinkStations = getLinkStations(parent);
+        MyArrayList<Station> childLinkStations = getLinkStations(parent);  //获取下一个要分析的站点的所有邻接点
         for (Station child : childLinkStations) {
             if (analysisList.contains(child)) {
                 continue;
@@ -74,7 +80,7 @@ public class DijkstraUtil {
             }
 
             int parentDistance = resultMap.get(parent).getDistance();
-            distance = distance + parentDistance;
+            distance = distance + parentDistance;                          //判断邻接点加入后的最短路径的点
             MyArrayList<Station> parentPassStations = resultMap.get(parent).getPassStations();
             Result childResult = resultMap.get(child);
             if (childResult != null) {
@@ -93,11 +99,11 @@ public class DijkstraUtil {
                 childResult.getPassStations().addAll(parentPassStations);
                 childResult.getPassStations().add(child);
             }
-            resultMap.put(child, childResult);
+            resultMap.put(child, childResult);                              //将最短路径的那个邻接点加入到结果集中
         }
         analysisList.add(parent);
-        calculate(startStation, endStation);
-        return resultMap.get(endStation);
+        calculate(startStation, endStation);                                //开始递归
+        return resultMap.get(endStation);                                   //返回结果
     }
 
     public Result calResult(Station start, Station end, MyArrayList<Line> lines){
@@ -143,21 +149,26 @@ public class DijkstraUtil {
         return rets;
     }
 
+    /**
+     * 获取站点相邻的所有站点，包括换乘路线上的
+     * @param station
+     * @return
+     */
     public MyArrayList<Station> getLinkStations(Station station) {
         MyArrayList<Station> linkedStations = new MyArrayList<>();
         for (Line line : lines) {
             MyArrayList<Station> stations = line.getStations();
             for (int i = 0; i < stations.size(); i++) {
                 if (station.equals(stations.get(i))) {
-                    if (i == 0) {
+                    if (i == 0) {                                           //判断是否为头结点
                         linkedStations.add(stations.get(i + 1));
-                    } else if (i == (stations.size() - 1)) {
+                    } else if (i == (stations.size() - 1)) {                //判断是否为尾结点
                         linkedStations.add(stations.get(i - 1));
                     } else {
                         linkedStations.add(stations.get(i + 1));
                         linkedStations.add(stations.get(i - 1));
                     }
-                    if (station.getIsTransferStation()) {
+                    if (station.getIsTransferStation()) {                  //判断是否需要换乘
                         getTransfer(linkedStations, station);
                     }
                 }
@@ -166,6 +177,11 @@ public class DijkstraUtil {
         return linkedStations;
     }
 
+    /**
+     * 检查是否换乘，并将换乘路线上的相邻站点加到邻接站点集合中
+     * @param linkedStations
+     * @param s
+     */
     private void getTransfer(MyArrayList<Station> linkedStations, Station s) {
         for (int id : s.getTransferLines()) {
             if (lines.size() < id){
