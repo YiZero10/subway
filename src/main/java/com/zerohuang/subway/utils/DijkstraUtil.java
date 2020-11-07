@@ -106,10 +106,19 @@ public class DijkstraUtil {
         return resultMap.get(endStation);                                   //返回结果
     }
 
+    /**
+     * 求解的入口
+     * @param start
+     * @param end
+     * @param lines
+     * @return
+     */
     public Result calResult(Station start, Station end, MyArrayList<Line> lines){
         this.lines = lines;
+        //调用Dijkstra算法函数calculate
         calculate(start, end);
         analysisList.clear();
+        //对所得到的解集合进行分析
         MyArrayList<Station> list = resultMap.get(end).getPassStations();
         MyArrayList<Station> pass = new MyArrayList<>();
         for ( Station station : list) {

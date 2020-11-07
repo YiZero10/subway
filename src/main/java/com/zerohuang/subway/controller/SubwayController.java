@@ -40,7 +40,6 @@ public class SubwayController {
     public Result getDFSResult(@RequestBody RequestStation station){
         Station start = DataBuild.getStation(station.getStartStation());
         Station end = DataBuild.getStation(station.getEndStation());
-
         return leastUtil.getLeast(start, end);
     }
    @PostConstruct

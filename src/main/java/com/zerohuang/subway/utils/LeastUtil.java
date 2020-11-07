@@ -1,6 +1,5 @@
 package com.zerohuang.subway.utils;
 
-import com.alibaba.fastjson.JSON;
 import com.zerohuang.subway.models.*;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
